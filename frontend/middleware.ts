@@ -1,25 +1,18 @@
-// frontend/middleware.ts
+// If you want to protect only /supplies (and anything under it)
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
 export function middleware(req: NextRequest) {
-  // Cookie name matches what the backend sets
-  const token = req.cookies.get('token')?.value;
-
-  // If no token and trying to access a protected route, go to /login
+  const token = req.cookies.get('token'); // or whatever cookie your backend sets
   if (!token) {
-    const loginUrl = new URL('/login', req.url);
-    // Preserve where they were trying to go:
-    loginUrl.searchParams.set('next', req.nextUrl.pathname);
-    return NextResponse.redirect(loginUrl);
+    const url = new URL('/login', req.url);
+    url.searchParams.set('next', req.nextUrl.pathname); // optional "back to" after login
+    return NextResponse.redirect(url);
   }
-
   return NextResponse.next();
 }
 
-// Protect everything except login/register and static assets
+// IMPORTANT: only run on /supplies
 export const config = {
-  matcher: [
-    '/((?!login|register|_next/static|_next/image|favicon.ico).*)',
-  ],
+  matcher: ['/supplies/:path*'],
 };

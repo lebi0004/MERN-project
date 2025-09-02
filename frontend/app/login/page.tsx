@@ -21,7 +21,7 @@ export default function LoginPage() {
     setMsg(null);
     try {
       await login(email, password);
-      router.push('/'); // go to main page after login
+      router.push('/supplies'); // go to main page after login
     } catch (e: any) {
       setErr(e?.response?.data?.message || 'Login failed');
     } finally {
